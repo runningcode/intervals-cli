@@ -1,0 +1,49 @@
+version: 2
+
+project_name: intervals-cli
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/runningcode/intervals-cli/cmd.version={{.Version}}
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+brews:
+  - repository:
+      owner: runningcode
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    directory: Formula
+    homepage: "https://github.com/runningcode/intervals-cli"
+    description: "CLI for the Intervals.icu API — activities, events, wellness, and sport settings"
+    license: "MIT"
+    test: |
+      system "#{bin}/intervals-cli", "--version"
+    install: |
+      bin.install "intervals-cli"
