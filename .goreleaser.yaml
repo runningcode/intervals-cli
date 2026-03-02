@@ -21,7 +21,7 @@ builds:
       - -X github.com/runningcode/intervals-cli/cmd.version={{.Version}}
 
 archives:
-  - format: tar.gz
+  - formats: [tar.gz]
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
 
 checksum:
@@ -34,16 +34,13 @@ changelog:
       - "^docs:"
       - "^test:"
 
-brews:
+homebrew_casks:
   - repository:
       owner: runningcode
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
-    directory: Formula
+    directory: Casks
+    binaries:
+      - intervals-cli
     homepage: "https://github.com/runningcode/intervals-cli"
     description: "CLI for the Intervals.icu API — activities, events, wellness, and sport settings"
-    license: "MIT"
-    test: |
-      system "#{bin}/intervals-cli", "--version"
-    install: |
-      bin.install "intervals-cli"

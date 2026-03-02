@@ -27,7 +27,7 @@ cd homebrew-tap
 mkdir Formula
 echo "# Homebrew Tap" > README.md
 echo "Install: \`brew tap runningcode/tap && brew install intervals-cli\`" >> README.md
-git add . && git commit -m "init: create homebrew tap" && git push
+git add . && git commit -m "init: create homebrew tap" && git push -u origin main
 cd -
 ```
 
@@ -51,10 +51,18 @@ In the intervals-cli repo on GitHub, go to **Settings → Secrets and variables 
 
 `GITHUB_TOKEN` is provided automatically by GitHub Actions — no action needed.
 
-### 5. Update .goreleaser.yaml with your GitHub username
+### 5. Update the Go module path
 
-Replace `runningcode` in `.goreleaser.yaml` with your actual GitHub
-username so goreleaser knows where to push the Homebrew formula.
+The generated code uses `github.com/example/intervals-cli` as a placeholder.
+Replace it everywhere with your actual GitHub username:
+
+```bash
+find . -type f \( -name "*.go" -o -name "*.yaml" -o -name "*.mod" -o -name "Makefile" \) \
+  | xargs perl -pi -e 's|github\.com/example/intervals-cli|github.com/runningcode/intervals-cli|g'
+```
+
+This updates `go.mod`, all import paths in `.go` files, and the ldflags in
+`.goreleaser.yaml` in one pass.
 
 ## Releasing
 
