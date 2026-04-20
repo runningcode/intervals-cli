@@ -21,12 +21,14 @@ Required flags:
   --start string      start date/time in ISO 8601 format (e.g. 2024-02-15T18:00:00)
 
 Optional flags:
+  --type string          sport type for WORKOUT category (Run, Ride, Swim, etc.)
   --description string   event description or workout notes
   --color string         event color (hex or named color)
 
 Examples:
-  intervals-cli create-event --name "VO2Max Intervals" --category WORKOUT --start 2024-02-15T18:00:00
-  intervals-cli create-event --name "A Race" --category RACE --start 2024-03-10T09:00:00 --description "Target: sub-3hr"`,
+  intervals-cli create-event --name "VO2Max Intervals" --category WORKOUT --start 2024-02-15T18:00:00 --type Run
+  intervals-cli create-event --name "A Race" --category RACE --start 2024-03-10T09:00:00 --description "Target: sub-3hr"
+  intervals-cli create-event --name "Note" --category NOTE --start 2024-02-15T09:00:00 --description "Rest day"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c := requireClient()
 
@@ -44,6 +46,9 @@ Examples:
 			"start_date_local": start,
 		}
 
+		if v, _ := cmd.Flags().GetString("type"); v != "" {
+			body["type"] = v
+		}
 		if v, _ := cmd.Flags().GetString("description"); v != "" {
 			body["description"] = v
 		}
@@ -81,6 +86,7 @@ func init() {
 	createEventCmd.Flags().String("name", "", "event name")
 	createEventCmd.Flags().String("category", "", "event category (WORKOUT, NOTE, RACE, etc.)")
 	createEventCmd.Flags().String("start", "", "start date/time in ISO 8601 format")
+	createEventCmd.Flags().String("type", "", "sport type for WORKOUT category (Run, Ride, Swim, etc.)")
 	createEventCmd.Flags().String("description", "", "event description or workout notes")
 	createEventCmd.Flags().String("color", "", "event color")
 	rootCmd.AddCommand(createEventCmd)
